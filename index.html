@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daryeel AI ⚕ · Galmudug Health</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Galmudug Flag Colors: Light Blue, White, Green */
+    --galmudug-blue: #4A90D9;
+    --galmudug-blue-light: #6AAEE8;
+    --galmudug-blue-deep: #2C6FA8;
+    --galmudug-green: #2E8B57;
+    --galmudug-green-light: #3DAA6A;
+    --galmudug-white: #FFFFFF;
+    --bg: #F0F7FF;
+    --bg2: #E8F4EC;
+    --text-dark: #1A2E3B;
+    --text-mid: #3D5A70;
+    --text-light: #6B8FA8;
+    --card-bg: rgba(255,255,255,0.85);
+    --shadow: 0 8px 32px rgba(44,111,168,0.13);
+    --radius: 20px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* FLAG STRIPE BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(to right,
+      var(--galmudug-blue) 0%, var(--galmudug-blue) 33.3%,
+      #fff 33.3%, #fff 66.6%,
+      var(--galmudug-green) 66.6%, var(--galmudug-green) 100%
+    );
+    z-index: 100;
+  }
+
+  /* MESH BACKGROUND */
+  .bg-mesh {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 15% 20%, rgba(74,144,217,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 75%, rgba(46,139,87,0.14) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(240,247,255,1) 0%, transparent 80%);
+    pointer-events: none;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: sticky;
+    top: 6px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 28px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1.5px solid rgba(74,144,217,0.15);
+    box-shadow: 0 2px 20px rgba(44,111,168,0.08);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-logo {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--galmudug-blue), var(--galmudug-green));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 14px rgba(74,144,217,0.35);
+  }
+
+  .nav-title-wrap h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--text-dark);
+    letter-spacing: -0.3px;
+  }
+
+  .nav-title-wrap p {
+    font-size: 11px;
+    color: var(--text-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* GALMUDUG FLAG MINI */
+  .flag-mini {
+    display: flex;
+    height: 22px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .flag-mini .f1 { width: 20px; background: var(--galmudug-blue); }
+  .flag-mini .f2 { width: 20px; background: #fff; }
+  .flag-mini .f3 { width: 20px; background: var(--galmudug-green); }
+
+  .nav-right {
+    display: flex; align-items: center; gap: 14px;
+  }
+
+  .lang-toggle {
+    display: flex;
+    background: rgba(74,144,217,0.1);
+    border-radius: 30px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .lang-toggle button {
+    border: none;
+    background: transparent;
+    padding: 4px 12px;
+    border-radius: 24px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-mid);
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .lang-toggle button.active {
+    background: var(--galmudug-blue);
+    color: white;
+    box-shadow: 0 2px 8px rgba(74,144,217,0.4);
+  }
+
+  .status-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(46,139,87,0.1);
+    border: 1px solid rgba(46,139,87,0.25);
+    color: var(--galmudug-green);
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    background: var(--galmudug-green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* MAIN */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 20px 140px;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-icon {
+    width: 88px; height: 88px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, var(--galmudug-blue) 0%, var(--galmudug-green) 100%);
+    border-radius: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px;
+    box-shadow: 0 16px 48px rgba(74,144,217,0.35), 0 4px 16px rgba(46,139,87,0.2);
+    position: relative;
+  }
+  .hero-icon::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 32px;
+    border: 2px solid rgba(74,144,217,0.25);
+  }
+
+  .hero h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--galmudug-blue-deep), var(--galmudug-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero .consultant {
+    font-size: 14px;
+    color: var(--galmudug-blue);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-bottom: 14px;
+  }
+
+  .hero .tagline {
+    font-size: 16px;
+    color: var(--text-mid);
+    line-height: 1.65;
+    max-width: 420px;
+    margin: 0 auto 18px;
+    font-weight: 300;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    background: linear-gradient(135deg, rgba(255,200,50,0.12), rgba(255,160,0,0.08));
+    border: 1.5px solid rgba(255,160,0,0.3);
+    border-radius: 14px;
+    padding: 13px 18px;
+    font-size: 13px;
+    color: #8B6300;
+    text-align: center;
+    line-height: 1.55;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s 0.15s ease both;
+  }
+
+  /* CATEGORY PILLS */
+  .category-pills {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 28px;
+    scrollbar-width: none;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .category-pills::-webkit-scrollbar { display: none; }
+  .pill {
+    white-space: nowrap;
+    padding: 7px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid rgba(74,144,217,0.25);
+    background: var(--card-bg);
+    color: var(--text-mid);
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .pill:hover, .pill.active {
+    background: var(--galmudug-blue);
+    border-color: var(--galmudug-blue);
+    color: white;
+    box-shadow: 0 4px 14px rgba(74,144,217,0.35);
+    transform: translateY(-1px);
+  }
+
+  /* TOPIC CARDS */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s 0.25s ease both;
+  }
+
+  .topic-card {
+    background: var(--card-bg);
+    border: 1.5px solid rgba(74,144,217,0.13);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(44,111,168,0.07);
+  }
+  .topic-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(44,111,168,0.16);
+    border-color: var(--galmudug-blue);
+    background: white;
+  }
+  .topic-card:hover .topic-icon {
+    transform: scale(1.15);
+  }
+
+  .topic-icon {
+    font-size: 32px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .topic-info h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+  }
+  .topic-info p {
+    font-size: 11.5px;
+    color: var(--text-light);
+    font-weight: 300;
+  }
+
+  /* QUICK QUESTIONS */
+  .quick-section {
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .quick-section h3 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+  .quick-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .quick-q {
+    background: var(--card-bg);
+    border: 1.5px solid rgba(74,144,217,0.12);
+    border-radius: 14px;
+    padding: 13px 18px;
+    font-size: 14px;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .quick-q:hover {
+    background: white;
+    border-color: var(--galmudug-blue);
+    color: var(--galmudug-blue-deep);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(74,144,217,0.12);
+  }
+  .quick-q span { font-size: 16px; opacity: 0.5; }
+
+  /* CHAT MESSAGES */
+  .chat-area {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+    min-height: 0;
+  }
+
+  .msg {
+    display: flex;
+    gap: 12px;
+    animation: fadeUp 0.3s ease both;
+  }
+  .msg.user { flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .msg.ai .msg-avatar {
+    background: linear-gradient(135deg, var(--galmudug-blue), var(--galmudug-green));
+  }
+  .msg.user .msg-avatar {
+    background: rgba(74,144,217,0.1);
+  }
+
+  .msg-bubble {
+    max-width: 80%;
+    padding: 14px 18px;
+    border-radius: 18px;
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+  .msg.ai .msg-bubble {
+    background: white;
+    border: 1.5px solid rgba(74,144,217,0.12);
+    color: var(--text-dark);
+    border-bottom-left-radius: 6px;
+    box-shadow: 0 4px 16px rgba(44,111,168,0.08);
+  }
+  .msg.user .msg-bubble {
+    background: linear-gradient(135deg, var(--galmudug-blue), var(--galmudug-blue-deep));
+    color: white;
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 4px 16px rgba(74,144,217,0.35);
+  }
+
+  .typing {
+    display: flex; gap: 5px; align-items: center; padding: 5px 0;
+  }
+  .typing span {
+    width: 7px; height: 7px;
+    background: var(--galmudug-blue);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+    opacity: 0.6;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-6px); }
+  }
+
+  /* CHAT INPUT */
+  .chat-input-wrap {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 50;
+    padding: 16px 20px 24px;
+    background: linear-gradient(to top, rgba(240,247,255,1) 60%, rgba(240,247,255,0));
+    backdrop-filter: blur(8px);
+  }
+
+  .chat-input-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: white;
+    border: 2px solid rgba(74,144,217,0.25);
+    border-radius: 20px;
+    padding: 10px 10px 10px 18px;
+    box-shadow: 0 8px 32px rgba(44,111,168,0.14), 0 0 0 4px rgba(74,144,217,0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .chat-input-inner:focus-within {
+    border-color: var(--galmudug-blue);
+    box-shadow: 0 8px 32px rgba(44,111,168,0.2), 0 0 0 4px rgba(74,144,217,0.12);
+  }
+
+  .chat-input-inner textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-dark);
+    background: transparent;
+    resize: none;
+    max-height: 120px;
+    line-height: 1.5;
+    padding: 4px 0;
+  }
+  .chat-input-inner textarea::placeholder { color: var(--text-light); }
+
+  .send-btn {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, var(--galmudug-blue), var(--galmudug-green));
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(74,144,217,0.4);
+  }
+  .send-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(74,144,217,0.5);
+  }
+  .send-btn:active { transform: scale(0.97); }
+
+  /* GALMUDUG FLAG SECTION */
+  .galmudug-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(74,144,217,0.08), rgba(46,139,87,0.08));
+    border: 1.5px solid rgba(74,144,217,0.15);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+  .galmudug-flag {
+    display: flex;
+    flex-direction: column;
+    height: 52px;
+    width: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .galmudug-flag .stripe { flex: 1; }
+  .galmudug-flag .stripe.blue { background: var(--galmudug-blue); }
+  .galmudug-flag .stripe.white { background: white; }
+  .galmudug-flag .stripe.green { background: var(--galmudug-green); }
+
+  .galmudug-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+  }
+  .galmudug-info p {
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 480px) {
+    .topics-grid { grid-template-columns: 1fr; }
+    .hero h2 { font-size: 30px; }
+    nav { padding: 12px 16px; }
+    .nav-title-wrap h1 { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">⚕</div>
+    <div class="nav-title-wrap">
+      <h1>Daryeel AI</h1>
+      <p>Caafimaad · Health · Galmudug</p>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="flag-mini">
+      <div class="f1"></div>
+      <div class="f2"></div>
+      <div class="f3"></div>
+    </div>
+    <div class="lang-toggle">
+      <button class="active" onclick="setLang('so')">SO</button>
+      <button onclick="setLang('en')">EN</button>
+    </div>
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      Online
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="hero">
+    <div class="hero-icon">⚕</div>
+    <h2>Daryeel AI</h2>
+    <p class="consultant">✦ Zeinab Mohamed — Clinical Health Consultant · Galmudug</p>
+    <p class="tagline" id="tagline">
+      Ku soo dhawoow Daryeel AI — Kaalmahaaga caafimaad oo bilaash ah ee bulshada Soomaalida. Weydii su'aal ku saabsan caafimaadkaaga.
+    </p>
+  </div>
+
+  <div class="disclaimer" id="disclaimer">
+    ⚠️ <strong>Daryeel AI waa macluumaad kaliya</strong> — ma beddeli karto dhakhtar.<br>
+    Xaalad deg-deg ah, tag isbitaalka ugu dhow.
+  </div>
+
+  <!-- Galmudug Flag Banner -->
+  <div class="galmudug-banner">
+    <div class="galmudug-flag">
+      <div class="stripe blue"></div>
+      <div class="stripe white"></div>
+      <div class="stripe green"></div>
+    </div>
+    <div class="galmudug-info">
+      <h4>Galmudug Health Initiative</h4>
+      <p>For the people of Galkacyo & all of Galmudug State — Free community healthcare information</p>
+    </div>
+  </div>
+
+  <!-- Category Pills -->
+  <div class="category-pills">
+    <button class="pill active" onclick="filterPill(this,'all')">🏥 <span id="pill-all">Dhami</span></button>
+    <button class="pill" onclick="filterPill(this,'cardiac')">❤️ Wadne</button>
+    <button class="pill" onclick="filterPill(this,'renal')">🫘 Kalyaha</button>
+    <button class="pill" onclick="filterPill(this,'respiratory')">🫁 Neefsasho</button>
+    <button class="pill" onclick="filterPill(this,'neuro')">🧠 Neuro</button>
+    <button class="pill" onclick="filterPill(this,'gi')">🫄 GI</button>
+    <button class="pill" onclick="filterPill(this,'maternal')">🤰 Hooyo</button>
+    <button class="pill" onclick="filterPill(this,'child')">👶 Caruur</button>
+  </div>
+
+  <!-- Topic Cards -->
+  <div class="topics-grid" id="topicsGrid">
+    <div class="topic-card" data-cat="cardiac" onclick="askTopic('Xanuunka Wadnaha')">
+      <div class="topic-icon">❤️</div>
+      <div class="topic-info">
+        <h3>Xanuunka Wadnaha</h3>
+        <p>Cardiac health</p>
+      </div>
+    </div>
+    <div class="topic-card" data-cat="renal" onclick="askTopic('Kalyaha (Kidney)')">
+      <div class="topic-icon">🫘</div>
+      <div class="topic-info">
+        <h3>Kalyaha (Kidney)</h3>
+        <p>Renal health</p>
+      </div>
+    </div>
+    <div class="topic-card" data-cat="respiratory" onclick="askTopic('Neefsashada')">
+      <div class="topic-icon">🫁</div>
+      <div class="topic-info">
+        <h3>Neefsashada</h3>
+        <p>Respiratory health</p>
+      </div>
+    </div>
+    <div class="topic-card" data-cat="neuro" onclick="askTopic('Madax xanuun & Kul')">
+      <div class="topic-icon">🤕</div>
+      <div class="topic-info">
+        <h3>Madax xanuun & Kul</h3>
+        <p>Headache & Fever</p>
+      </div>
+    </div>
+    <div class="topic-card" data-cat="maternal" onclick="askTopic('Caafimaadka Hooyada')">
+      <div class="topic-icon">🤰</div>
+      <div class="topic-info">
+        <h3>Caafimaadka Hooyada</h3>
+        <p>Maternal health</p>
+      </div>
+    </div>
+    <div class="topic-card" data-cat="child" onclick="askTopic('Caafimaadka Carruurta')">
+      <div class="topic-icon">👶</div>
+      <div class="topic-info">
+        <h3>Caafimaadka Carruurta</h3>
+        <p>Children's health</p>
+      </div>
+    </div>
+    <div class="topic-card" data-cat="gi" onclick="askTopic('Caloosha & Xiiqda')">
+      <div class="topic-icon">🫄</div>
+      <div class="topic-info">
+        <h3>Caloosha & Xiiqda</h3>
+        <p>GI & Digestive</p>
+      </div>
+    </div>
+    <div class="topic-card" data-cat="neuro" onclick="askTopic('Shaqaalaha Maskaxda')">
+      <div class="topic-icon">🧠</div>
+      <div class="topic-info">
+        <h3>Maskaxda</h3>
+        <p>Neurological health</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Questions -->
+  <div class="quick-section">
+    <h3 id="qqTitle">Su'aalaha ugu badan</h3>
+    <div class="quick-questions">
+      <div class="quick-q" onclick="askTopic('Maxaa sababa xanuunka wadnaha?')">
+        <span id="qq1">Maxaa sababa xanuunka wadnaha?</span> <span>→</span>
+      </div>
+      <div class="quick-q" onclick="askTopic('Calaamadaha uu wadnaha xanuun leeyahay?')">
+        <span id="qq2">Calaamadaha uu wadnaha xanuun leeyahay?</span> <span>→</span>
+      </div>
+      <div class="quick-q" onclick="askTopic('Sida looga ilaalinkaraa xanuunka kalyaha?')">
+        <span id="qq3">Sida looga ilaalinkara xanuunka kalyaha?</span> <span>→</span>
+      </div>
+      <div class="quick-q" onclick="askTopic('Caloosha xanuun — goorma waa xaalad deg deg ah?')">
+        <span id="qq4">Caloosha xanuun — goorma waa xaalad deg deg ah?</span> <span>→</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Area -->
+  <div class="chat-area" id="chatArea"></div>
+</main>
+
+<div class="chat-input-wrap">
+  <div class="chat-input-inner">
+    <textarea
+      id="inputBox"
+      rows="1"
+      placeholder="Su'ashaada caafimaad ku qor..."
+      oninput="autoResize(this)"
+      onkeydown="handleKey(event)"
+    ></textarea>
+    <button class="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<script>
+  let currentLang = 'so';
+
+  const translations = {
+    so: {
+      tagline: "Ku soo dhawoow Daryeel AI — Kaalmahaaga caafimaad oo bilaash ah ee bulshada Soomaalida. Weydii su'aal ku saabsan caafimaadkaaga.",
+      disclaimer: "⚠️ <strong>Daryeel AI waa macluumaad kaliya</strong> — ma beddeli karto dhakhtar.<br>Xaalad deg-deg ah, tag isbitaalka ugu dhow.",
+      placeholder: "Su'ashaada caafimaad ku qor...",
+      qqTitle: "Su'aalaha ugu badan",
+      qq1: "Maxaa sababa xanuunka wadnaha?",
+      qq2: "Calaamadaha uu wadnaha xanuun leeyahay?",
+      qq3: "Sida looga ilaalinkara xanuunka kalyaha?",
+      qq4: "Caloosha xanuun — goorma waa xaalad deg deg ah?",
+      pillAll: "Dhami"
+    },
+    en: {
+      tagline: "Welcome to Daryeel AI — Your free health assistant for the Somali community. Ask any health question.",
+      disclaimer: "⚠️ <strong>Daryeel AI is for information only</strong> — it cannot replace a doctor.<br>In an emergency, go to the nearest hospital.",
+      placeholder: "Type your health question...",
+      qqTitle: "Most Asked Questions",
+      qq1: "What causes heart disease?",
+      qq2: "What are the symptoms of heart problems?",
+      qq3: "How can I prevent kidney disease?",
+      qq4: "Stomach pain — when is it an emergency?",
+      pillAll: "All"
+    }
+  };
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-toggle button[onclick="setLang('${lang}')"]`).classList.add('active');
+    const t = translations[lang];
+    document.getElementById('tagline').textContent = t.tagline;
+    document.getElementById('disclaimer').innerHTML = t.disclaimer;
+    document.getElementById('inputBox').placeholder = t.placeholder;
+    document.getElementById('qqTitle').textContent = t.qqTitle;
+    document.getElementById('qq1').textContent = t.qq1;
+    document.getElementById('qq2').textContent = t.qq2;
+    document.getElementById('qq3').textContent = t.qq3;
+    document.getElementById('qq4').textContent = t.qq4;
+    document.getElementById('pill-all').textContent = t.pillAll;
+  }
+
+  function filterPill(el, cat) {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.topic-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'flex' : 'none';
+    });
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function askTopic(text) {
+    document.getElementById('inputBox').value = text;
+    sendMessage();
+  }
+
+  // Chat history for multi-turn memory
+  let chatHistory = [];
+
+  const SYSTEM_PROMPT = `You are Daryeel AI, a compassionate and knowledgeable community health assistant created for the Somali people of Galmudug State, Somalia. You are associated with Zeinab Mohamed, a Clinical Health Consultant based in Galmudug.
+
+Your role:
+- Provide clear, accurate, and culturally sensitive health information
+- Answer in the SAME language the user writes in: if they write in Somali (Af Soomaali), respond in Somali. If they write in English, respond in English. If they mix, match their primary language.
+- Cover topics including cardiac health (xanuunka wadnaha), renal/kidney health (kalyaha), respiratory issues (neefsashada), neurology (maskaxda), GI/digestive health (caloosha), maternal health (caafimaadka hooyada), and children's health (caafimaadka carruurta)
+- Be warm, empathetic, and community-focused — many users may have limited healthcare access
+- Use simple, clear language — avoid overly technical jargon
+- Always add a safety reminder at the end of serious health topics to see a doctor or go to the nearest hospital for emergencies
+- Never diagnose — provide general health education and guidance only
+- When answering in Somali, use proper Af Soomaali medical terminology where it exists
+- Keep responses concise but complete — 3 to 6 sentences is ideal, unless more detail is truly needed
+- End emergency-adjacent questions with: "🚨 Xaalad deg-deg ah: tag isbitaalka ugu dhow" (in Somali) or "🚨 Emergency: go to the nearest hospital immediately" (in English)
+
+You serve the people of Galkacyo and all of Galmudug. Be their trusted, free health companion.`;
+
+  async function sendMessage() {
+    const input = document.getElementById('inputBox');
+    const text = input.value.trim();
+    if (!text) return;
+
+    // Hide the home screen sections once user starts chatting
+    document.querySelector('.topics-grid') && (document.querySelector('.topics-grid').style.display = 'none');
+    document.querySelector('.quick-section') && (document.querySelector('.quick-section').style.display = 'none');
+    document.querySelector('.galmudug-banner') && (document.querySelector('.galmudug-banner').style.display = 'none');
+    document.querySelector('.category-pills') && (document.querySelector('.category-pills').style.display = 'none');
+
+    addMessage('user', text);
+    chatHistory.push({ role: 'user', content: text });
+    input.value = '';
+    input.style.height = 'auto';
+
+    // Show typing indicator
+    const typingId = 'typing_' + Date.now();
+    const chatArea = document.getElementById('chatArea');
+    chatArea.innerHTML += `
+      <div class="msg ai" id="${typingId}">
+        <div class="msg-avatar">⚕</div>
+        <div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>
+      </div>`;
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    try {
+      const GEMINI_API_KEY = 'AIzaSyBbu9cbIrPF4EklJw_-i0fmcYLq0lm5OUM';
+      const geminiMessages = chatHistory.map(m => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: m.content }]
+      }));
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: geminiMessages
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Waan ka xumahay, jawaab ma helin. Fadlan isku day mar kale.';
+
+      document.getElementById(typingId)?.remove();
+      chatHistory.push({ role: 'assistant', content: reply });
+      addMessage('ai', reply);
+
+    } catch (err) {
+      document.getElementById(typingId)?.remove();
+      addMessage('ai', '⚠️ Xiriirka internetka waa jab yar. Fadlan isku day mar kale.\n\nConnection error. Please try again.');
+    }
+  }
+
+  function addMessage(role, text) {
+    const chatArea = document.getElementById('chatArea');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    // Format text: newlines to <br>, and bold **text**
+    const formatted = text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+    div.innerHTML = `
+      <div class="msg-avatar">${role === 'ai' ? '⚕' : '👤'}</div>
+      <div class="msg-bubble">${formatted}</div>
+    `;
+    chatArea.appendChild(div);
+    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  // Allow clicking topic cards / quick questions to also hide home UI
+  function askTopic(text) {
+    document.getElementById('inputBox').value = text;
+    sendMessage();
+  }
+</script>
+</body>
+</html>
