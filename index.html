@@ -847,6 +847,9 @@ You serve the people of Galkacyo and all of Galmudug. Be their trusted, free hea
       });
 
       const data = await response.json();
+      if (!response.ok) {
+        throw new Error('API Error: ' + JSON.stringify(data));
+      }
       const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Waan ka xumahay, jawaab ma helin. Fadlan isku day mar kale.';
 
       document.getElementById(typingId)?.remove();
@@ -855,7 +858,7 @@ You serve the people of Galkacyo and all of Galmudug. Be their trusted, free hea
 
     } catch (err) {
       document.getElementById(typingId)?.remove();
-      addMessage('ai', '⚠️ Xiriirka internetka waa jab yar. Fadlan isku day mar kale.\n\nConnection error. Please try again.');
+      addMessage('ai', '⚠️ Khalad ayaa dhacay: ' + err.message + '\n\nError: ' + err.message);
     }
   }
 
